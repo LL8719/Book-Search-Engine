@@ -28,26 +28,14 @@ const resolvers = {
 			const token = signToken(user);
 			return { token, user };
 		},
-		saveBook: async (
-			parent,
-			{ authors, description, title, bookId, image, link },
-			context
-		) => {
+		saveBook: async (parent, args, context) => {
 			if (context.user) {
-				const book = await Book.create({
-					authors,
-					description,
-					title,
-					bookId,
-					image,
-					link,
-				});
-				await User.findOneAndUpdate(
+				const userBook = await User.findByIdAndUpdate(
 					{ _id: context.user._id },
-					{ $addToSet: { savedBooks: book._id } },
+					{ $addToSet: { savedBooks: args.input } },
 					{ new: true }
-				).populate('savedBooks');
-				return User.findOne({ _id: context.user._id }).populate('savedBooks');
+				);
+				return userBook;
 			}
 			throw new AuthenticationError('You need to be logged in!');
 		},
