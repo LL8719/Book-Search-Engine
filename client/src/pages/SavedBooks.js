@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
 
-import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { GET_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
 
@@ -13,6 +11,7 @@ const SavedBooks = () => {
 	const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
 	const userData = data?.me || {};
+	console.log(userData);
 
 	// create function that accepts the book's mongo _id value as param and deletes the book from the database
 	const handleDeleteBook = async (bookId) => {
@@ -23,7 +22,7 @@ const SavedBooks = () => {
 		}
 
 		try {
-			const { data } = await removeBook({
+			await removeBook({
 				variables: { bookId },
 			});
 
@@ -37,7 +36,6 @@ const SavedBooks = () => {
 	if (loading) {
 		return <h2>LOADING...</h2>;
 	}
-
 	return (
 		<>
 			<div fluid className="text-light bg-dark p-5">
@@ -47,14 +45,14 @@ const SavedBooks = () => {
 			</div>
 			<Container>
 				<h2 className="pt-5">
-					{userData.savedBooks && userData.savedBooks.length > 0
+					{userData.savedBooks?.length
 						? `Viewing ${userData.savedBooks.length} saved ${
 								userData.savedBooks.length === 1 ? 'book' : 'books'
 						  }:`
 						: 'You have no saved books!'}
 				</h2>
 				<Row>
-					{userData.savedBooks &&
+					{userData.savedBooks?.length &&
 						userData.savedBooks.map((book) => {
 							return (
 								<Col md="4">

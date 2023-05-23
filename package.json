@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.14",
+    "@apollo/react-hooks": "^4.0.0",
     "bcrypt": "^5.1.0",
     "jsonwebtoken": "^9.0.0"
   }
