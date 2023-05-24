@@ -1,4 +1,5 @@
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
+import { useEffect } from 'react';
 
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
@@ -11,9 +12,15 @@ const SavedBooks = () => {
 	const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
 	const userData = data?.me || {};
-	console.log(userData);
+
+	useEffect(() => {
+		if (data) {
+			console.log(data.me); // Access the 'me' object directly
+		}
+	}, [data]);
 
 	// create function that accepts the book's mongo _id value as param and deletes the book from the database
+
 	const handleDeleteBook = async (bookId) => {
 		const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -22,8 +29,8 @@ const SavedBooks = () => {
 		}
 
 		try {
-			await removeBook({
-				variables: { bookId },
+			const { data } = await removeBook({
+				variables: { bookId: bookId },
 			});
 
 			removeBookId(bookId);
@@ -53,7 +60,7 @@ const SavedBooks = () => {
 				</h2>
 				<Row>
 					{userData.savedBooks?.length &&
-						userData.savedBooks.map((book) => {
+						userData.savedBooks?.map((book) => {
 							return (
 								<Col md="4">
 									<Card key={book.bookId} border="dark">
